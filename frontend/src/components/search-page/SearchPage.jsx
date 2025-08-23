@@ -31,6 +31,16 @@ const Search = () => {
         <div className="relative z-10 flex items-center justify-center h-full pt-20 px-4">
           <SearchBox />
         </div>
+      <button
+  className="px-10 py-3 text-2xl font-semibold text-white rounded-xl
+  bg-gray-900/50 backdrop-blur-md shadow-lg
+  absolute bottom-10 left-1/2 transform -translate-x-1/2
+  transition-all duration-300 ease-in-out
+  hover:bg-gray-800/50 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-400"
+>
+  Discover
+</button>
+
       </div>
     </Container>
   );
