@@ -33,11 +33,9 @@ import Container from "../container/Container";
 const Navbar = () => {
   return (
     <Container>
-      <nav className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white">
+      <nav className="flex items-center justify-between p-4 text-white">
         {/* Left - Logo */}
-        <div className="text-2xl font-serif tracking-wide font-bold">
-          Drobe
-        </div>
+        <div className="text-2xl font-serif tracking-wide font-bold">Drobe</div>
 
         {/* Center - Search Bar (hidden on small screens) */}
         <div className="hidden md:flex items-center w-1/2 bg-white text-gray-700 rounded-full px-4 py-2 shadow-sm">
@@ -47,23 +45,25 @@ const Navbar = () => {
             placeholder="Search for items"
             className="w-full bg-transparent outline-none text-sm"
           />
-          <div className="flex items-center text-gray-400 text-xs space-x-1">
-            <span className="px-1.5 py-0.5 border rounded-md">⌘</span>
-            <span className="px-1.5 py-0.5 border rounded-md">K</span>
-          </div>
+          <button
+            type="submit"
+            className="ml-2 px-3 py-1 bg-gray-300 text-white rounded-full hover:bg-gray-400 transition-colors text-xs font-medium"
+          >
+            Search
+          </button>
         </div>
 
         {/* Right - Wardrobe + Account */}
         <div className="flex items-center space-x-6">
           <NavLink
             to="/wardrobe"
-            className="text-sm bg-blue-300  rounded-2xl p-2 font-medium hover: text-amber-100"
+            className="text-sm bg-gray-500  rounded-2xl p-2 font-medium hover: text-gray-100 hover:bg-gray-600"
           >
             Wardrobe
           </NavLink>
 
           {/* Simple Account Icon */}
-          <User className="h-10 w-10 cursor-pointer bg-blue-300 rounded-[50%] p-1 hover:text-gray-300" />
+          <User className="h-10 w-10 cursor-pointer bg-gray-500  rounded-[50%] p-1 " />
         </div>
       </nav>
 
