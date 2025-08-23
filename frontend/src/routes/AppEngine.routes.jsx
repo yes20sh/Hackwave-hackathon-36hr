@@ -8,7 +8,7 @@ const AppEngine = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={Main} />
+        <Route path="/" element={<Main />} />
         <Route path="/search" element={<Search />} />
       </Routes>
     </Router>
