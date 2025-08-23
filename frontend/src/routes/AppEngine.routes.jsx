@@ -2,7 +2,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Search from "../pages/search.page";
-import Main from "../pages/Main.page"
+import Main from "../pages/Main.page";
 
 const AppEngine = () => {
   return (
