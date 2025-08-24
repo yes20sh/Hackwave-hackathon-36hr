@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
+=======
+>>>>>>> de4195d (wardrobe done)
 
 const Signin = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+<<<<<<< HEAD
     username: "",
+=======
+    username: "", // make sure backend expects this
+>>>>>>> de4195d (wardrobe done)
     password: "",
   });
   const [message, setMessage] = useState(null);
@@ -23,6 +30,7 @@ const Signin = () => {
 
     try {
       const res = await axios.post("http://localhost:8000/api/users/login", form);
+<<<<<<< HEAD
       setMessage(res.data.message);
 
       // Optional: save token / user
@@ -31,6 +39,22 @@ const Signin = () => {
     } catch (err) {
       if (err.response && err.response.data) {
         setError(err.response.data.detail || "Login failed");
+=======
+      setMessage(res.data.message || "Login successful!");
+      // Example: save token
+      // localStorage.setItem("token", res.data.access_token);
+    } catch (err) {
+      if (err.response && err.response.data) {
+        const detail = err.response.data.detail;
+
+        if (Array.isArray(detail)) {
+          setError(detail.map((d) => d.msg).join(", "));
+        } else if (typeof detail === "string") {
+          setError(detail);
+        } else {
+          setError("Login failed");
+        }
+>>>>>>> de4195d (wardrobe done)
       } else {
         setError("Network error");
       }
@@ -89,6 +113,7 @@ const Signin = () => {
           </button>
         </form>
 
+<<<<<<< HEAD
         {/* Redirect */}
         <p className="text-center mt-6 text-gray-700 font-extralight">
           Don’t have an account?{" "}
@@ -99,6 +124,13 @@ const Signin = () => {
           >
             Sign Up
           </span>
+=======
+        <p className="text-sm text-center mt-4">
+          Don't have an account?{" "}
+          <a href="/signup" className="text-blue-500 hover:underline">
+            Sign Up
+          </a>
+>>>>>>> de4195d (wardrobe done)
         </p>
       </div>
     </div>
