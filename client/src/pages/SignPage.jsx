@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import axios from "axios";
-<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 =======
 >>>>>>> de4195d (wardrobe done)
+=======
+>>>>>>> d4aff7f (update the code)
 
 const Signin = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-<<<<<<< HEAD
     username: "",
+<<<<<<< HEAD
 =======
     username: "", // make sure backend expects this
 >>>>>>> de4195d (wardrobe done)
+=======
+>>>>>>> d4aff7f (update the code)
     password: "",
   });
   const [message, setMessage] = useState(null);
@@ -30,7 +34,6 @@ const Signin = () => {
 
     try {
       const res = await axios.post("http://localhost:8000/api/users/login", form);
-<<<<<<< HEAD
       setMessage(res.data.message);
 
       // Optional: save token / user
@@ -39,6 +42,7 @@ const Signin = () => {
     } catch (err) {
       if (err.response && err.response.data) {
         setError(err.response.data.detail || "Login failed");
+<<<<<<< HEAD
 =======
       setMessage(res.data.message || "Login successful!");
       // Example: save token
@@ -55,6 +59,8 @@ const Signin = () => {
           setError("Login failed");
         }
 >>>>>>> de4195d (wardrobe done)
+=======
+>>>>>>> d4aff7f (update the code)
       } else {
         setError("Network error");
       }
@@ -113,7 +119,6 @@ const Signin = () => {
           </button>
         </form>
 
-<<<<<<< HEAD
         {/* Redirect */}
         <p className="text-center mt-6 text-gray-700 font-extralight">
           Don’t have an account?{" "}
@@ -124,6 +129,7 @@ const Signin = () => {
           >
             Sign Up
           </span>
+<<<<<<< HEAD
 =======
         <p className="text-sm text-center mt-4">
           Don't have an account?{" "}
@@ -131,6 +137,8 @@ const Signin = () => {
             Sign Up
           </a>
 >>>>>>> de4195d (wardrobe done)
+=======
+>>>>>>> d4aff7f (update the code)
         </p>
       </div>
     </div>
