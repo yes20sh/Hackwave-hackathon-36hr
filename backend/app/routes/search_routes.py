@@ -6,5 +6,6 @@ router = APIRouter(prefix="/search", tags=["Search"])
 
 @router.post("/")
 def search_products(request: SearchRequest):
-    results = search_google_shopping(request.query, request.location)
+    # Only pass the query now
+    results = search_google_shopping(request.query)
     return results

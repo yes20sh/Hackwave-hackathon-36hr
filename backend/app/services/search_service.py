@@ -1,15 +1,15 @@
 from serpapi import GoogleSearch
 from app.core.config import settings
 
-def search_google_shopping(query: str, location: str = "Austin, Texas, United States"):
+def search_google_shopping(query: str):
     try:
         params = {
             "engine": "google_shopping",
             "q": query,
-            "location": location,
+            "location": "India",  # Default location set to India
             "google_domain": "google.com",
             "hl": "en",
-            "gl": "us",
+            "gl": "in",           # Google country code for India
             "api_key": settings.SERPAPI_KEY
         }
 
