@@ -1,12 +1,8 @@
 fastapi==0.111.1
-uvicorn[standard]==0.26.1
 python-dotenv==1.0.0
 requests==2.32.0
-serpapi==1.0.0
 
 # MongoDB async driver
-motor==4.3.0
-
 # Password hashing
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
