@@ -17,7 +17,7 @@ const Navbar = () => {
           Drobe
         </h1>
 
-        {/* Center Buttons */}
+
         <div className="flex items-center space-x-4">
           <button className="bg-white text-gray-800 px-5 py-2 rounded-lg text-sm font-semibold shadow hover:bg-gray-100 transition">
             Search
