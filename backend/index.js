@@ -1,4 +1,3 @@
-// index.js
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
@@ -6,45 +5,38 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Middleware
 app.use(express.json());
 
-// ✅ Debug log to check if key is loaded
-console.log("SerpApi Key:", process.env.SERPAPI_KEY ? "✅ Loaded" : "❌ Not loaded");
+// Debug environment variables
+console.log("Environment Variables:", process.env);
 
-// ✅ Test route
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
 
-// ✅ Shopping Search API route
 app.get("/api/shopping", async (req, res) => {
   const { q } = req.query;
+  if (!q) return res.status(400).json({ error: "Query parameter 'q' is required" });
 
   try {
-    const response = await axios.get("https://serpapi.com/search.json", {
-      params: {
-        engine: "google_shopping",
-        q: q || "iPhone",
-        location: "Austin, Texas, United States",
-        google_domain: "google.com",
-        hl: "en",
-        gl: "us",
-        api_key: process.env.SERPAPI_KEY,
-      },
-    });
-
+    const params = {
+      engine: "google_shopping",
+      q: encodeURIComponent(q),
+      location: "Austin, Texas, United States",
+      google_domain: "google.com",
+      hl: "en",
+      gl: "us",
+      api_key: process.env.SERPAPI_KEY,
+    };
+    
+    const response = await axios.get("https://serpapi.com/search.json", { params });
     res.json(response.data);
   } catch (error) {
-    console.error(
-      "Error fetching shopping results:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({ error: "Something went wrong" });
+    console.error("Error:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to fetch data" });
   }
 });
 
-// ✅ Start server
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
