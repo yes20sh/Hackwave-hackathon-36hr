@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 const Signin = () => {
   const [form, setForm] = useState({
-    username: '',
-    password: '',
+    username: "", // make sure backend expects this
+    password: "",
   });
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
-
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,16 +19,23 @@ const Signin = () => {
     setError(null);
 
     try {
-      const res = await axios.post('http://localhost:8000/api/users/login', form);
-      setMessage(res.data.message);
-      // Optional: save user info or token in localStorage
-      // localStorage.setItem('user', JSON.stringify(res.data.user));
-      // navigate('/dashboard'); // Redirect after login
+      const res = await axios.post("http://localhost:8000/api/users/login", form);
+      setMessage(res.data.message || "Login successful!");
+      // Example: save token
+      // localStorage.setItem("token", res.data.access_token);
     } catch (err) {
       if (err.response && err.response.data) {
-        setError(err.response.data.detail || 'Login failed');
+        const detail = err.response.data.detail;
+
+        if (Array.isArray(detail)) {
+          setError(detail.map((d) => d.msg).join(", "));
+        } else if (typeof detail === "string") {
+          setError(detail);
+        } else {
+          setError("Login failed");
+        }
       } else {
-        setError('Network error');
+        setError("Network error");
       }
     }
   };
@@ -70,7 +76,10 @@ const Signin = () => {
         </form>
 
         <p className="text-sm text-center mt-4">
-          Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign Up</a>
+          Don't have an account?{" "}
+          <a href="/signup" className="text-blue-500 hover:underline">
+            Sign Up
+          </a>
         </p>
       </div>
     </div>
