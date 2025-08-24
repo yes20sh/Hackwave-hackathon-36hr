@@ -1,27 +1,10 @@
-
-
-
-
 import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
-import { FaSearch, FaArrowRight } from "react-icons/fa";
-
-const getTrendingItems = async (gender) => {
-  const mockData = {
-    female: ["Floral Dresses", "Leather Tote Bags", "Gold Hoop Earrings", "High-waisted Jeans", "Platform Sneakers"],
-    male: ["Oversized Hoodies", "Minimalist Watches", "Straight-leg Jeans", "Puffer Jackets", "Smart Sneakers"],
-    unisex: ["Graphic T-shirts", "Crossbody Bags", "Classic Backpacks", "Cargo Pants", "Loafers"],
-    child: ["Cartoon T-shirts", "Denim Overalls", "Sneakers with Lights", "Hooded Sweatshirts", "Playful Hats"]
-  };
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockData[gender] || []);
-    }, 500);
-  });
-};
+import { FaSearch } from "react-icons/fa";
+import { FiArrowUpRight } from "react-icons/fi";
+import { fetchGeminiResponse } from "../utils/geminiServices"; // 👈 import Gemini
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
@@ -38,13 +21,27 @@ const SearchPage = () => {
     setGender(selectedGender);
     setTrendingWords([]);
     setLoading(true);
+    setError(null);
 
     try {
-      const words = await getTrendingItems(selectedGender);
-      setTrendingWords(words);
+      const prompt = `Give me a JSON array of the top 5 trending fashion items for ${selectedGender}. Example: ["Oversized Hoodies", "Smart Sneakers", "Straight-leg Jeans"]`;
+
+      const response = await fetchGeminiResponse(prompt);
+
+      let trends = [];
+
+      if (Array.isArray(response)) {
+        trends = response;
+      } else if (Array.isArray(response?.text)) {
+        trends = response.text;
+      } else if (typeof response?.text === "string") {
+        trends = response.text.split(",").map((t) => t.trim());
+      }
+
+      setTrendingWords(trends);
     } catch (err) {
-      setError("Failed to fetch trending topics.");
       console.error(err);
+      setError("Failed to fetch trends from Gemini.");
     } finally {
       setLoading(false);
     }
@@ -52,18 +49,14 @@ const SearchPage = () => {
 
   const handleSearch = async (searchTerm) => {
     const searchQuery = searchTerm || query;
-    if (!gender) {
-      alert("Please select a gender to get tailored recommendations.");
-      return;
-    }
     setLoading(true);
     setError(null);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/search/", {
-        query: searchQuery,
-        gender,
-      });
+      const body = { query: searchQuery };
+      if (gender) body.gender = gender;
+
+      const res = await axios.post("http://localhost:8000/api/search/", body);
       const items = res.data.shopping_results || [];
       setResults(items);
       setFilteredResults(items);
@@ -143,12 +136,11 @@ const SearchPage = () => {
               />
             </div>
 
-            {/* Replaced + button with search arrow */}
             <button
               type="submit"
               className="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 transition-colors"
             >
-              <FaArrowRight />
+              <FiArrowUpRight />
             </button>
           </form>
 
@@ -172,8 +164,8 @@ const SearchPage = () => {
             ))}
           </div>
 
-          {/* Trending words */}
-          {gender && (
+          {/* Trending topic buttons */}
+          {gender && trendingWords.length > 0 && (
             <div className="mt-6 w-full max-w-md flex flex-wrap gap-3 justify-center">
               <p className="text-gray-600 mb-2 w-full text-center font-semibold">
                 Trending for {gender.charAt(0).toUpperCase() + gender.slice(1)}:
@@ -214,7 +206,27 @@ const SearchPage = () => {
             </p>
           )}
 
-          <div className="flex flex-wrap gap-2 mb-4">
+          {/* Carousel for trending */}
+          {trendingWords.length > 0 && (
+            <div className="mt-10 w-full overflow-hidden">
+              <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">
+                Trending Now
+              </h2>
+              <div className="flex gap-4 overflow-x-auto px-4 py-2 scrollbar-hide">
+                {trendingWords.map((item, index) => (
+                  <div
+                    key={index}
+                    className="min-w-[180px] shrink-0 bg-white rounded-xl border border-gray-300 shadow-sm px-4 py-6 text-center hover:shadow-md transition"
+                  >
+                    <p className="text-lg font-medium text-gray-800">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2 mb-4 mt-8">
             <button
               onClick={() => handleFilter("lowToHigh")}
               className={`px-3 py-1 rounded-md text-sm font-medium ${
@@ -247,6 +259,7 @@ const SearchPage = () => {
             </button>
           </div>
 
+          {/* Product Results */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
             {filteredResults.length === 0 && !loading && !error && (
               <p className="text-center col-span-full text-gray-700">
