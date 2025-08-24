@@ -50,18 +50,28 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Create Account</h1>
+    <div
+      className="min-h-screen flex items-center justify-center px-6"
+      style={{ backgroundColor: "#C8D7C8" }}
+    >
+      <div
+        className="rounded-3xl p-10 w-full max-w-md shadow-lg backdrop-blur-sm border border-white/30"
+        style={{ backgroundColor: "#ffffffcc" }}
+      >
+        {/* Heading */}
+        <h1 className="text-4xl font-extralight text-center mb-8 tracking-wide">
+          Create <span style={{ color: "#669966" }}>Account</span>
+        </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           <input
             type="text"
             name="username"
             placeholder="Username"
             value={formData.username}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-3 border rounded-xl font-light text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#669966] transition-all"
             required
           />
           <input
@@ -70,7 +80,7 @@ const SignupPage = () => {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-3 border rounded-xl font-light text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#669966] transition-all"
             required
           />
           <input
@@ -79,7 +89,7 @@ const SignupPage = () => {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-3 border rounded-xl font-light text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#669966] transition-all"
             required
           />
           <input
@@ -88,28 +98,36 @@ const SignupPage = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-3 border rounded-xl font-light text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#669966] transition-all"
             required
           />
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold"
+            className="w-full py-3 rounded-full shadow-md font-light tracking-wide text-white transition-all duration-300 hover:opacity-90"
+            style={{ backgroundColor: "#669966" }}
           >
             {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        {/* Messages */}
+        {error && (
+          <p className="text-red-500 text-center mt-4 font-light">{error}</p>
+        )}
         {successMsg && (
-          <p className="text-green-500 text-center mt-4">{successMsg}</p>
+          <p className="text-green-600 text-center mt-4 font-light">
+            {successMsg}
+          </p>
         )}
 
-        <p className="text-center mt-6 text-gray-600">
+        {/* Redirect */}
+        <p className="text-center mt-6 text-gray-700 font-extralight">
           Already have an account?{" "}
           <span
-            className="text-blue-500 hover:underline cursor-pointer"
+            className="cursor-pointer hover:underline"
+            style={{ color: "#669966" }}
             onClick={() => navigate("/login")}
           >
             Log In

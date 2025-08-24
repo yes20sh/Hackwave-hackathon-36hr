@@ -8,8 +8,11 @@ class Settings:
     MONGO_URL: str = os.getenv("MONGO_URL")
     DB_NAME: str = os.getenv("DB_NAME", "fastapi_mongo")
     
-    # Optional settings
+    # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "supersecret")
+    
+    # APIs
     SERPAPI_KEY: str = os.getenv("SERPAPI_KEY", "")
+    HUGGINGFACE_API_KEY: str = os.getenv("HUGGINGFACE_API_KEY", "")
 
 settings = Settings()
