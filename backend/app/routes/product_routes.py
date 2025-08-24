@@ -15,17 +15,26 @@ router = APIRouter()
 # -------------------- Products --------------------
 
 # ✅ Add product
-@router.post("/products", response_model=ProductResponse)
+@router.post("/", response_model=ProductResponse)
 async def create_product(product: ProductCreate):
     return await add_product(product)
 
+# ✅ Add product into specific category
+@router.post("/category/{category}", response_model=ProductResponse)
+async def create_product_in_category(category: str, product: ProductCreate):
+    """
+    Create a new product and directly assign it to a specific category.
+    """
+    product.category = category  # force assign category
+    return await add_product(product)
+
 # ✅ List products by category
-@router.get("/products/category/{category}", response_model=List[ProductResponse])
+@router.get("/category/{category}", response_model=List[ProductResponse])
 async def list_products_by_category(category: str):
     return await get_products_by_category(category)
 
 # ✅ List all products
-@router.get("/products", response_model=List[ProductResponse])
+@router.get("/", response_model=List[ProductResponse])
 async def list_all_products():
     products_cursor = db.products.find({})
     products = []
@@ -34,7 +43,6 @@ async def list_all_products():
         del product["_id"]
         products.append(product)
     return products
-
 
 # -------------------- Categories --------------------
 

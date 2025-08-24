@@ -1,6 +1,13 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.utils.gemini_utils import analyze_image
-from app.utils.serpapi_utils import search_google_shopping
+import os
+
+# Optional: import SerpAPI if available
+try:
+    from app.utils.serpapi_utils import search_google_shopping
+    SERPAPI_ENABLED = True
+except ImportError:
+    SERPAPI_ENABLED = False
 
 router = APIRouter()
 
@@ -9,6 +16,7 @@ async def upload_image(file: UploadFile = File(...)):
     try:
         image_bytes = await file.read()
 
+        # Analyze image with Gemini
         analysis = analyze_image(image_bytes)
         prompt = analysis.get("prompt")
         categories = analysis.get("categories", [])
@@ -17,22 +25,32 @@ async def upload_image(file: UploadFile = File(...)):
             error = analysis.get("error", "Failed to generate prompt from image.")
             raise HTTPException(status_code=400, detail=error)
 
-        search = search_google_shopping(prompt)
-        if search.get("status") == "error":
+        # If SerpAPI is not configured, return only prompt & categories
+        if not SERPAPI_ENABLED:
             return {
                 "prompt": prompt,
                 "categories": categories,
                 "search_results": [],
-                "serpapi_message": search.get("message", "SerpAPI error")
+                "serpapi_message": "SerpAPI not configured"
+            }
+
+        # If SerpAPI available, try searching
+        search = search_google_shopping(prompt)
+        if isinstance(search, dict) and search.get("error"):
+            return {
+                "prompt": prompt,
+                "categories": categories,
+                "search_results": [],
+                "serpapi_message": search["error"]
             }
 
         return {
             "prompt": prompt,
             "categories": categories,
-            "search_results": search.get("shopping_results", [])
+            "search_results": search  
         }
 
-    except HTTPException as e:
-        raise e
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

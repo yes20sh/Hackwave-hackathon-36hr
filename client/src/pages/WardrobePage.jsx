@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Trash2 } from "lucide-react"; // for delete icon
 
 const WardrobePage = () => {
-  const [categories, setCategories] = useState(["Shirts", "T-Shirts", "Jeans"]); // suggestions
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [product, setProduct] = useState({ name: "", image: "", price: "" });
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch all products initially
+  // ✅ Fetch categories from API
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/products/categories");
+      setCategories(res.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load categories");
+    }
+  };
+
+  // ✅ Fetch all products
   const fetchAllProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/products/");
+      const res = await axios.get("http://localhost:8000/api/products");
       setProducts(res.data);
     } catch (err) {
       console.error(err);
@@ -22,32 +32,31 @@ const WardrobePage = () => {
   };
 
   useEffect(() => {
+    fetchCategories();
     fetchAllProducts();
   }, []);
 
-  // Add new category
-  const handleAddCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
+  // ✅ Add new category (via API)
+  const handleAddCategory = async () => {
+    if (!newCategory) return;
+    try {
+      await axios.post("http://localhost:8000/api/products/categories", null, {
+        params: { name: newCategory }, // backend expects ?name=...
+      });
       setNewCategory("");
+      fetchCategories(); // refresh list
+    } catch (err) {
+      console.error(err);
+      setError("Failed to add category");
     }
   };
 
-  // Remove category (and its products in frontend state)
-  const handleRemoveCategory = (cat) => {
-    setCategories(categories.filter((c) => c !== cat));
-    setProducts(products.filter((p) => p.category !== cat));
-    if (selectedCategory === cat) {
-      setSelectedCategory("");
-    }
-  };
-
-  // Add new product into category
+  // ✅ Add new product into selected category
   const handleAddProduct = async () => {
     if (!selectedCategory || !product.name) return;
 
     try {
-      const res = await axios.post("http://localhost:8000/api/products/", {
+      const res = await axios.post("http://localhost:8000/api/products", {
         ...product,
         category: selectedCategory,
       });
@@ -140,16 +149,9 @@ const WardrobePage = () => {
               key={cat}
               className="bg-white rounded-xl shadow-md p-4 flex flex-col relative"
             >
-              {/* Category Header with Delete */}
+              {/* Category Header */}
               <div className="flex justify-between items-center mb-4 border-b pb-2">
                 <h2 className="text-xl font-semibold">{cat}</h2>
-                <button
-                  onClick={() => handleRemoveCategory(cat)}
-                  className="text-red-500 hover:text-red-700"
-                  title="Remove Category"
-                >
-                  <Trash2 size={20} />
-                </button>
               </div>
 
               {/* Products */}

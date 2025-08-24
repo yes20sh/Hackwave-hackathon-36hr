@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiCoatHangerFill } from "react-icons/pi";
 
-// Render stars for rating (rounded)
+// Render stars for rating
 const renderStars = (rating) => {
   const stars = [];
   const maxStars = 5;
   const roundedRating = Math.round(rating);
   for (let i = 1; i <= maxStars; i++) {
     stars.push(
-      <span key={i} className={i <= roundedRating ? "text-yellow-400" : "text-gray-300"}>
+      <span
+        key={i}
+        className={i <= roundedRating ? "text-yellow-400" : "text-gray-300"}
+      >
         ★
       </span>
     );
@@ -16,7 +19,7 @@ const renderStars = (rating) => {
   return stars;
 };
 
-// Highlight search keywords in a text
+// Highlight search keywords
 const highlightKeyword = (text, keyword) => {
   if (!keyword) return text;
   const regex = new RegExp(`(${keyword})`, "gi");
@@ -30,26 +33,80 @@ const highlightKeyword = (text, keyword) => {
   );
 };
 
-const ProductCard = ({ item, keyword, onAddToWardrobe }) => {
+const ProductCard = ({ item, keyword }) => {
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
-  const categories = [
-    "Casual Wear",
-    "Formal Wear",
-    "Sportswear",
-    "Outerwear",
-    "Traditional Wear",
-    "Custom"
-  ];
+  // Fetch categories from API
+  const fetchCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const res = await fetch("http://localhost:8000/api/products/categories");
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      const data = await res.json();
+      setCategories(data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+      setCategories([]);
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
 
-  const handleCategorySelect = (category) => {
-    onAddToWardrobe(item, category); // directly add to wardrobe
-    setShowCategoryMenu(false);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Add product to a selected category
+  const handleCategorySelect = async (category) => {
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/products/category/${encodeURIComponent(category)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            category,
+            position: 0,
+            title: item.title || "Untitled",
+            product_link: item.product_link || "",
+            product_id: item.product_id || "",
+            serpapi_product_api: item.serpapi_product_api || "",
+            immersive_product_page_token: item.immersive_product_page_token || "",
+            serpapi_immersive_product_api: item.serpapi_immersive_product_api || "",
+            source: item.source || "",
+            source_icon: item.source_icon || "",
+            multiple_sources: item.multiple_sources || false,
+            price: item.price || "",
+            extracted_price: item.extracted_price || 0,
+            old_price: item.old_price || "",
+            extracted_old_price: item.extracted_old_price || 0,
+            rating: item.rating || 0,
+            reviews: item.reviews || 0,
+            thumbnail: item.thumbnail || "",
+            thumbnails: item.thumbnails || [],
+            serpapi_thumbnails: item.serpapi_thumbnails || [],
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to add product");
+
+      const saved = await res.json();
+      console.log("✅ Product added to wardrobe:", saved);
+      alert(`Added "${item.title}" to ${category}`);
+    } catch (err) {
+      console.error("Error adding product:", err);
+      alert("❌ Failed to add product");
+    } finally {
+      // Close the category menu after adding
+      setShowCategoryMenu(false);
+    }
   };
 
   return (
     <div className="relative bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
-      
       {/* Add to Wardrobe Button */}
       <button
         onClick={() => setShowCategoryMenu(!showCategoryMenu)}
@@ -61,16 +118,22 @@ const ProductCard = ({ item, keyword, onAddToWardrobe }) => {
 
       {/* Category Selection Popup */}
       {showCategoryMenu && (
-        <div className="absolute top-10 right-2 bg-white shadow-lg rounded-lg p-3 w-48 z-10 flex flex-col gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className="text-left px-2 py-1 rounded hover:bg-gray-100"
-              onClick={() => handleCategorySelect(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="absolute top-10 right-2 bg-white shadow-lg rounded-lg p-3 w-56 z-10 flex flex-col gap-2">
+          {loadingCategories ? (
+            <p className="text-gray-400 text-sm">Loading...</p>
+          ) : categories.length > 0 ? (
+            categories.map((cat) => (
+              <button
+                key={cat}
+                className="text-left px-2 py-1 rounded hover:bg-gray-100"
+                onClick={() => handleCategorySelect(cat)}
+              >
+                {cat}
+              </button>
+            ))
+          ) : (
+            <p className="text-gray-400 text-sm">No categories found</p>
+          )}
         </div>
       )}
 
@@ -97,7 +160,6 @@ const ProductCard = ({ item, keyword, onAddToWardrobe }) => {
 
         <p className="text-sm text-gray-500 mb-2">Listed at: {item.source}</p>
 
-        {/* Price Section */}
         <div className="mb-3">
           <p className="text-blue-600 font-bold text-lg">{item.price}</p>
           {item.old_price && (
@@ -105,17 +167,17 @@ const ProductCard = ({ item, keyword, onAddToWardrobe }) => {
           )}
         </div>
 
-        {/* Rating */}
         {item.rating ? (
           <div className="flex items-center mb-3">
             {renderStars(item.rating)}
-            <span className="ml-2 text-sm text-gray-600">{item.rating.toFixed(1)}</span>
+            <span className="ml-2 text-sm text-gray-600">
+              {item.rating.toFixed(1)}
+            </span>
           </div>
         ) : (
           <p className="text-sm text-gray-400 mb-3">No rating available</p>
         )}
 
-        {/* Link Button (push to bottom) */}
         <a
           href={item.product_link}
           target="_blank"
