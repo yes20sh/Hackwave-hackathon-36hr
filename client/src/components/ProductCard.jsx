@@ -59,15 +59,15 @@ const ProductCard = ({ item, keyword }) => {
   }, []);
 
   // Add product to a selected category
-  const handleCategorySelect = async (category) => {
+  const handleCategorySelect = async (categoryName) => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/products/category/${encodeURIComponent(category)}`,
+        `http://localhost:8000/api/products/category/${encodeURIComponent(categoryName)}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            category,
+            category: categoryName,
             position: 0,
             title: item.title || "Untitled",
             product_link: item.product_link || "",
@@ -95,12 +95,11 @@ const ProductCard = ({ item, keyword }) => {
 
       const saved = await res.json();
       console.log("✅ Product added to wardrobe:", saved);
-      alert(`Added "${item.title}" to ${category}`);
+      alert(`Added "${item.title}" to ${categoryName}`);
     } catch (err) {
       console.error("Error adding product:", err);
       alert("❌ Failed to add product");
     } finally {
-      // Close the category menu after adding
       setShowCategoryMenu(false);
     }
   };
@@ -124,11 +123,11 @@ const ProductCard = ({ item, keyword }) => {
           ) : categories.length > 0 ? (
             categories.map((cat) => (
               <button
-                key={cat}
+                key={cat.id || cat.name}
                 className="text-left px-2 py-1 rounded hover:bg-gray-100"
-                onClick={() => handleCategorySelect(cat)}
+                onClick={() => handleCategorySelect(cat.name)}
               >
-                {cat}
+                {cat.name}
               </button>
             ))
           ) : (

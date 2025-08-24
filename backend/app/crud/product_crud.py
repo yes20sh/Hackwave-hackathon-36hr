@@ -22,13 +22,24 @@ async def get_products_by_category(category: str):
     return products
 
 
-# ✅ Get only all category names
-async def get_all_category_names():
-    categories_cursor = db.categories.find({}, {"name": 1, "_id": 0})
-    category_names = []
+# ✅ Get all categories with id + name
+async def get_all_categories():
+    categories_cursor = db.categories.find({}, {"name": 1})
+    categories = []
     async for category in categories_cursor:
-        category_names.append(category["name"])
-    return category_names
+        categories.append({
+            "id": str(category["_id"]),
+            "name": category["name"]
+        })
+    return categories
+
+
+# ✅ Delete product by ID
+async def delete_product(product_id: str):
+    result = await db.products.delete_one({"_id": ObjectId(product_id)})
+    if result.deleted_count == 0:
+        return {"error": "Product not found"}
+    return {"message": "Product deleted successfully"}
 
 
 # ✅ Add new category (prevents duplicates)

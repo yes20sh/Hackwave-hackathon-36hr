@@ -15,6 +15,7 @@ const SearchPage = () => {
   const [error, setError] = useState(null);
   const [showMainNavbar, setShowMainNavbar] = useState(false);
   const [activeFilter, setActiveFilter] = useState("");
+<<<<<<< HEAD
   const [trendingWords, setTrendingWords] = useState([]);
 
   const handleGenderSelect = async (selectedGender) => {
@@ -46,6 +47,8 @@ const SearchPage = () => {
       setLoading(false);
     }
   };
+=======
+>>>>>>> 83ea4b7 (wardRobe-done)
 
   const handleSearch = async (searchTerm) => {
     const searchQuery = searchTerm || query;
@@ -53,10 +56,16 @@ const SearchPage = () => {
     setError(null);
 
     try {
+<<<<<<< HEAD
       const body = { query: searchQuery };
       if (gender) body.gender = gender;
 
       const res = await axios.post("http://localhost:8000/api/search/", body);
+=======
+      const res = await axios.post("http://localhost:8000/api/search/", {
+        query: searchQuery,
+      });
+>>>>>>> 83ea4b7 (wardRobe-done)
       const items = res.data.shopping_results || [];
       setResults(items);
       setFilteredResults(items);
@@ -109,9 +118,15 @@ const SearchPage = () => {
       />
 
       {!showMainNavbar && (
+<<<<<<< HEAD
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
           <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
             Looking for your next favorite outfit?
+=======
+        <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">
+            Search Products
+>>>>>>> 83ea4b7 (wardRobe-done)
           </h1>
 
           <form
@@ -119,6 +134,7 @@ const SearchPage = () => {
               e.preventDefault();
               handleSearch(query);
             }}
+<<<<<<< HEAD
             className="flex flex-col md:flex-row w-full max-w-xl gap-2 items-center"
           >
             <div className="relative flex-1 w-full">
@@ -139,6 +155,21 @@ const SearchPage = () => {
             <button
               type="submit"
               className="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 transition-colors"
+=======
+            className="flex flex-col sm:flex-row w-full max-w-md sm:max-w-xl gap-3 sm:gap-0"
+          >
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for products..."
+              className="flex-1 px-4 py-3 rounded-lg sm:rounded-l-lg sm:rounded-r-none border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none hover:bg-blue-600 transition-colors font-semibold"
+>>>>>>> 83ea4b7 (wardRobe-done)
             >
               <FiArrowUpRight />
             </button>
@@ -195,12 +226,16 @@ const SearchPage = () => {
       )}
 
       {showMainNavbar && (
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
           {loading && <p className="text-center text-gray-600">Loading...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
 
           {!loading && !error && (
+<<<<<<< HEAD
             <p className="text-gray-700 mb-4">
+=======
+            <p className="text-gray-700 mb-4 text-sm sm:text-base">
+>>>>>>> 83ea4b7 (wardRobe-done)
               {filteredResults.length} result
               {filteredResults.length !== 1 ? "s" : ""} found
             </p>
@@ -229,7 +264,7 @@ const SearchPage = () => {
           <div className="flex flex-wrap gap-2 mb-4 mt-8">
             <button
               onClick={() => handleFilter("lowToHigh")}
-              className={`px-3 py-1 rounded-md text-sm font-medium ${
+              className={`px-3 py-1 rounded-md text-xs sm:text-sm font-medium ${
                 activeFilter === "lowToHigh"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700"
@@ -239,7 +274,7 @@ const SearchPage = () => {
             </button>
             <button
               onClick={() => handleFilter("highToLow")}
-              className={`px-3 py-1 rounded-md text-sm font-medium ${
+              className={`px-3 py-1 rounded-md text-xs sm:text-sm font-medium ${
                 activeFilter === "highToLow"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700"
@@ -249,7 +284,7 @@ const SearchPage = () => {
             </button>
             <button
               onClick={() => handleFilter("ratingHighToLow")}
-              className={`px-3 py-1 rounded-md text-sm font-medium ${
+              className={`px-3 py-1 rounded-md text-xs sm:text-sm font-medium ${
                 activeFilter === "ratingHighToLow"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700"
@@ -259,8 +294,13 @@ const SearchPage = () => {
             </button>
           </div>
 
+<<<<<<< HEAD
           {/* Product Results */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+=======
+          {/* Results Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mt-4">
+>>>>>>> 83ea4b7 (wardRobe-done)
             {filteredResults.length === 0 && !loading && !error && (
               <p className="text-center col-span-full text-gray-700">
                 No results found

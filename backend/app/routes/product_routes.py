@@ -1,10 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
 from typing import List
+
+from app.crud import product_crud
 from app.schemas.product_schema import ProductCreate, ProductResponse
 from app.crud.product_crud import (
     add_product,
     get_products_by_category,
-    get_all_category_names,
+    get_all_categories,
     add_category,
     delete_category,
 )
@@ -19,6 +21,7 @@ router = APIRouter()
 async def create_product(product: ProductCreate):
     return await add_product(product)
 
+
 # ✅ Add product into specific category
 @router.post("/category/{category}", response_model=ProductResponse)
 async def create_product_in_category(category: str, product: ProductCreate):
@@ -28,10 +31,12 @@ async def create_product_in_category(category: str, product: ProductCreate):
     product.category = category  # force assign category
     return await add_product(product)
 
+
 # ✅ List products by category
 @router.get("/category/{category}", response_model=List[ProductResponse])
 async def list_products_by_category(category: str):
     return await get_products_by_category(category)
+
 
 # ✅ List all products
 @router.get("/", response_model=List[ProductResponse])
@@ -44,19 +49,28 @@ async def list_all_products():
         products.append(product)
     return products
 
+
 # -------------------- Categories --------------------
 
-# ✅ Get all category names
-@router.get("/categories", response_model=List[str])
+# ✅ Get all categories (id + name)
+@router.get("/categories")
 async def list_all_categories():
-    return await get_all_category_names()
+    return await get_all_categories()
+
 
 # ✅ Add new category
 @router.post("/categories")
-async def create_category(name: str):
+async def create_category(name: str = Query(..., description="Category name")):
     return await add_category(name)
+
 
 # ✅ Delete category by ID
 @router.delete("/categories/{category_id}")
 async def remove_category(category_id: str):
     return await delete_category(category_id)
+
+
+# ✅ Delete product by ID
+@router.delete("/{product_id}")
+async def remove_product(product_id: str):
+    return await product_crud.delete_product(product_id)
