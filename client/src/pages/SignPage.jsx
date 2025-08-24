@@ -1,23 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-=======
->>>>>>> de4195d (wardrobe done)
-=======
->>>>>>> d4aff7f (update the code)
 
 const Signin = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     username: "",
-<<<<<<< HEAD
-=======
-    username: "", // make sure backend expects this
->>>>>>> de4195d (wardrobe done)
-=======
->>>>>>> d4aff7f (update the code)
     password: "",
   });
   const [message, setMessage] = useState(null);
@@ -34,16 +23,6 @@ const Signin = () => {
 
     try {
       const res = await axios.post("http://localhost:8000/api/users/login", form);
-      setMessage(res.data.message);
-
-      // Optional: save token / user
-      // localStorage.setItem("user", JSON.stringify(res.data.user));
-      // navigate("/dashboard");
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.detail || "Login failed");
-<<<<<<< HEAD
-=======
       setMessage(res.data.message || "Login successful!");
       // Example: save token
       // localStorage.setItem("token", res.data.access_token);
@@ -58,9 +37,6 @@ const Signin = () => {
         } else {
           setError("Login failed");
         }
->>>>>>> de4195d (wardrobe done)
-=======
->>>>>>> d4aff7f (update the code)
       } else {
         setError("Network error");
       }
@@ -129,16 +105,6 @@ const Signin = () => {
           >
             Sign Up
           </span>
-<<<<<<< HEAD
-=======
-        <p className="text-sm text-center mt-4">
-          Don't have an account?{" "}
-          <a href="/signup" className="text-blue-500 hover:underline">
-            Sign Up
-          </a>
->>>>>>> de4195d (wardrobe done)
-=======
->>>>>>> d4aff7f (update the code)
         </p>
       </div>
     </div>
