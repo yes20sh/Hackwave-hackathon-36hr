@@ -6,11 +6,12 @@ def search_google_shopping(query: str):
         params = {
             "engine": "google_shopping",
             "q": query,
-            "location": "India",  # Default location set to India
+            "location": "India",
             "google_domain": "google.com",
             "hl": "en",
-            "gl": "in",           # Google country code for India
-            "api_key": settings.SERPAPI_KEY
+            "gl": "in",
+            "api_key": settings.SERPAPI_KEY,
+            # Optional: "num": 20,  # Number of products to fetch
         }
 
         search = GoogleSearch(params)
@@ -19,7 +20,14 @@ def search_google_shopping(query: str):
         if "error" in results:
             return {"status": "error", "message": results["error"]}
 
-        return {"status": "success", "data": results}
+        # Extract just the shopping_results array and return
+        shopping_results = results.get("shopping_results", [])
+
+        # You can also filter/transform here if needed before sending
+        return {
+            "status": "success",
+            "shopping_results": shopping_results,
+        }
 
     except Exception as e:
         return {"status": "error", "message": str(e)}
