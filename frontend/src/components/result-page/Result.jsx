@@ -34,9 +34,9 @@ const Result = () => {
                 <Card
                   key={i}
                   image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKEffPh8cCc4OIx5kkrcHAP_mtV7uzCHfCDQ&s"
-                  brand="H&M"
+                  brand="ZARA"
                   name="Men's Regular Fit T-Shirt"
-                  price="9.99"
+                  price="999"
                 />
               ))}
             </div>
