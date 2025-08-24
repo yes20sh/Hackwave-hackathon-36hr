@@ -1,31 +1,74 @@
 
 
+
+
 import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
+import { FaSearch, FaArrowRight } from "react-icons/fa";
+
+const getTrendingItems = async (gender) => {
+  const mockData = {
+    female: ["Floral Dresses", "Leather Tote Bags", "Gold Hoop Earrings", "High-waisted Jeans", "Platform Sneakers"],
+    male: ["Oversized Hoodies", "Minimalist Watches", "Straight-leg Jeans", "Puffer Jackets", "Smart Sneakers"],
+    unisex: ["Graphic T-shirts", "Crossbody Bags", "Classic Backpacks", "Cargo Pants", "Loafers"],
+    child: ["Cartoon T-shirts", "Denim Overalls", "Sneakers with Lights", "Hooded Sweatshirts", "Playful Hats"]
+  };
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockData[gender] || []);
+    }, 500);
+  });
+};
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
+  const [gender, setGender] = useState("");
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showMainNavbar, setShowMainNavbar] = useState(false);
-  const [activeFilter, setActiveFilter] = useState(""); // current filter
+  const [activeFilter, setActiveFilter] = useState("");
+  const [trendingWords, setTrendingWords] = useState([]);
+
+  const handleGenderSelect = async (selectedGender) => {
+    setGender(selectedGender);
+    setTrendingWords([]);
+    setLoading(true);
+
+    try {
+      const words = await getTrendingItems(selectedGender);
+      setTrendingWords(words);
+    } catch (err) {
+      setError("Failed to fetch trending topics.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = async (searchTerm) => {
     const searchQuery = searchTerm || query;
+    if (!gender) {
+      alert("Please select a gender to get tailored recommendations.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/search/", { query: searchQuery });
+      const res = await axios.post("http://localhost:8000/api/search/", {
+        query: searchQuery,
+        gender,
+      });
       const items = res.data.shopping_results || [];
       setResults(items);
       setFilteredResults(items);
       setShowMainNavbar(true);
-      setActiveFilter(""); // reset filter
+      setActiveFilter("");
     } catch (err) {
       setError("Failed to fetch results");
       console.error(err);
@@ -34,7 +77,6 @@ const SearchPage = () => {
     }
   };
 
-  // Filter / sort functionality
   const handleFilter = (filterType) => {
     let tempResults = [...results];
     setActiveFilter(filterType);
@@ -55,9 +97,7 @@ const SearchPage = () => {
         );
         break;
       case "ratingHighToLow":
-        tempResults.sort(
-          (a, b) => (b.rating || 0) - (a.rating || 0) // assuming API returns 'rating' field
-        );
+        tempResults.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       default:
         tempResults = [...results];
@@ -78,30 +118,87 @@ const SearchPage = () => {
       {!showMainNavbar && (
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
           <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
-            Search Products
+            Looking for your next favorite outfit?
           </h1>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSearch(query);
             }}
-            className="flex w-full max-w-md"
+            className="flex flex-col md:flex-row w-full max-w-xl gap-2 items-center"
           >
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for products..."
-              className="flex-1 px-4 py-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
+            <div className="relative flex-1 w-full">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search for products..."
+                className="w-full px-12 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                required
+              />
+              <FaSearch
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                onClick={() => handleSearch(query)}
+              />
+            </div>
+
+            {/* Replaced + button with search arrow */}
             <button
               type="submit"
-              className="bg-blue-500 text-white px-6 py-3 rounded-r-lg hover:bg-blue-600 transition-colors font-semibold"
+              className="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 transition-colors"
             >
-              Search
+              <FaArrowRight />
             </button>
           </form>
+
+          {/* Gender selection */}
+          <div className="flex justify-center gap-4 mt-6">
+            {["male", "female", "unisex", "child"].map((g) => (
+              <button
+                key={g}
+                type="button"
+                className={`px-6 py-2 rounded-full transition-colors font-semibold ${
+                  gender === g
+                    ? g === "female"
+                      ? "bg-pink-600 text-white"
+                      : "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+                onClick={() => handleGenderSelect(g)}
+              >
+                {g.charAt(0).toUpperCase() + g.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Trending words */}
+          {gender && (
+            <div className="mt-6 w-full max-w-md flex flex-wrap gap-3 justify-center">
+              <p className="text-gray-600 mb-2 w-full text-center font-semibold">
+                Trending for {gender.charAt(0).toUpperCase() + gender.slice(1)}:
+              </p>
+              {loading ? (
+                <p className="text-gray-500">Loading trends...</p>
+              ) : error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                trendingWords.map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => {
+                      setQuery(item);
+                      handleSearch(item);
+                    }}
+                    className="cursor-pointer px-4 py-2 border border-gray-400 rounded-full text-gray-700 hover:bg-blue-100 transition"
+                    type="button"
+                  >
+                    {item}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -110,20 +207,19 @@ const SearchPage = () => {
           {loading && <p className="text-center text-gray-600">Loading...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
 
-          {/* Show number of results */}
           {!loading && !error && (
             <p className="text-gray-700 mb-4">
-              {filteredResults.length} result{filteredResults.length !== 1 ? "s" : ""} found
+              {filteredResults.length} result
+              {filteredResults.length !== 1 ? "s" : ""} found
             </p>
           )}
 
-          {/* Filters */}
           <div className="flex flex-wrap gap-2 mb-4">
             <button
               onClick={() => handleFilter("lowToHigh")}
               className={`px-3 py-1 rounded-md text-sm font-medium ${
                 activeFilter === "lowToHigh"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
             >
@@ -133,7 +229,7 @@ const SearchPage = () => {
               onClick={() => handleFilter("highToLow")}
               className={`px-3 py-1 rounded-md text-sm font-medium ${
                 activeFilter === "highToLow"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
             >
@@ -143,7 +239,7 @@ const SearchPage = () => {
               onClick={() => handleFilter("ratingHighToLow")}
               className={`px-3 py-1 rounded-md text-sm font-medium ${
                 activeFilter === "ratingHighToLow"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
             >
@@ -152,13 +248,15 @@ const SearchPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
-  {filteredResults.length === 0 && !loading && !error && (
-    <p className="text-center col-span-full text-gray-700">No results found</p>
-  )}
-  {filteredResults.map((item) => (
-    <ProductCard key={item.product_id || item.position} item={item} />
-  ))}
-</div>
+            {filteredResults.length === 0 && !loading && !error && (
+              <p className="text-center col-span-full text-gray-700">
+                No results found
+              </p>
+            )}
+            {filteredResults.map((item) => (
+              <ProductCard key={item.product_id || item.position} item={item} />
+            ))}
+          </div>
         </div>
       )}
     </div>
