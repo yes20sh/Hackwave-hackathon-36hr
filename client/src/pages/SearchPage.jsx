@@ -15,8 +15,7 @@ const SearchPage = () => {
   const [error, setError] = useState(null);
   const [showMainNavbar, setShowMainNavbar] = useState(false);
   const [activeFilter, setActiveFilter] = useState("");
-<<<<<<< HEAD
-<<<<<<< HEAD
+
   const [trendingWords, setTrendingWords] = useState([]);
 
   const handleGenderSelect = async (selectedGender) => {
