@@ -1,54 +1,83 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-// import { useNavigate } from 'react-router-dom'; // Optional: if you use react-router
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Signin = () => {
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
+const SignupPage = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    name: "",
+    password: "",
   });
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(null);
     setError(null);
+    setSuccessMsg(null);
+    setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:8000/api/users/login', form);
-      setMessage(res.data.message);
-      // Optional: save user info or token in localStorage
-      // localStorage.setItem('user', JSON.stringify(res.data.user));
-      // navigate('/dashboard'); // Redirect after login
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.detail || 'Login failed');
-      } else {
-        setError('Network error');
+      const res = await axios.post(
+        "http://localhost:8000/api/users/signup",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (res.data.success) {
+        setSuccessMsg(res.data.message);
+        setTimeout(() => {
+          navigate("/login"); // redirect to login page after signup
+        }, 2000);
       }
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.detail || "Signup failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
-
-        {message && <p className="text-green-600 mb-4">{message}</p>}
-        {error && <p className="text-red-600 mb-4">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6">Create Account</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             name="username"
             placeholder="Username"
-            value={form.username}
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={formData.name}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
@@ -57,25 +86,38 @@ const Signin = () => {
             type="password"
             name="password"
             placeholder="Password"
-            value={form.password}
+            value={formData.password}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
           />
+
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold"
           >
-            Sign In
+            {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
-        <p className="text-sm text-center mt-4">
-          Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign Up</a>
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        {successMsg && (
+          <p className="text-green-500 text-center mt-4">{successMsg}</p>
+        )}
+
+        <p className="text-center mt-6 text-gray-600">
+          Already have an account?{" "}
+          <span
+            className="text-blue-500 hover:underline cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Log In
+          </span>
         </p>
       </div>
     </div>
   );
 };
 
-export default Signin;
+export default SignupPage;

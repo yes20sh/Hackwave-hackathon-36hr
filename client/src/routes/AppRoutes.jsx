@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Signup from "../pages/SignupPage.jsx";
 import SearchPage from "../pages/SearchPage.jsx";
 import WardrobePage from "../pages/WardrobePage.jsx";
+import Signin from "../pages/SignPage.jsx";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage.jsx";
+import ChangePasswordPage from "../pages/ChangePasswordPage.jsx";
 
 const AppRoutes = () => {
   return (
@@ -11,9 +14,11 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/search" />} />
         <Route path="/signup" element={<Signup />} />
-        {/* <Route path="/login" element={<Signin />} /> */}
+        <Route path="/login" element={<Signin />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/wardrobe" element={<WardrobePage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/change-password" element={<ChangePasswordPage />} />
         <Route
           path="*"
           element={

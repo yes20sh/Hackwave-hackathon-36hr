@@ -7,8 +7,12 @@ class UserCreate(BaseModel):
     password: str
 
 class UserLogin(BaseModel):
-    username: str
+    username_or_email: str
     password: str
 
 class ForgotPassword(BaseModel):
     email: EmailStr
+
+class ChangePassword(BaseModel):
+    username_or_email: str
+    new_password: str

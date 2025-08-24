@@ -1,62 +1,84 @@
-import { Link } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
 
-const SignUpForm = ({ setAuthMode }) => {
+const Signup = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8000/api/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Signup successful!");
+        console.log("Response:", data);
+      } else {
+        setMessage(data.message || "Signup failed!");
+        console.error("Error:", data);
+      }
+    } catch (error) {
+      setMessage("An error occurred. Try again.");
+      console.error("Error:", error);
+    }
+  };
+
   return (
-    <div className="h-screen w-screen flex bg-white">
-      {/* Left Section */}
-      <div className="w-1/2 flex flex-col justify-center items-center px-8">
-        <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-2 text-center">
-          Sign up for <span className="italic font-light">Drobe</span>
-        </h1>
-        <p className="text-gray-600 mb-8 text-center">
-          Create your account to get the best deals.
-        </p>
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <form
+        className="bg-white p-8 rounded-xl shadow-md w-96"
+        onSubmit={handleSignup}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 
-        {/* Sign-up Form */}
-        <form className="w-full max-w-sm space-y-4">
-          <input
-            type="text"
-            placeholder="Username"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-black/80 focus:outline-none"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-black/80 focus:outline-none"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-black/80 focus:outline-none"
-          />
-          <button className="w-full py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition">
-            Sign Up
-          </button>
-        </form>
-
-        {/* Footer links */}
-        <p className="text-sm text-gray-600 mt-6 text-center">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Log in
-          </Link>
-        </p>
-      </div>
-
-      {/* Right Section (Illustration) */}
-      <div className="w-1/2 flex justify-center items-center py-6 px-8">
-        <img
-          src="https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?cs=srgb&dl=pexels-kowalievska-1055691.jpg&fm=jpg"
-          alt="Illustration"
-          className="rounded-2xl shadow-lg max-w-full max-h-full object-contain"
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full p-3 mb-4 border rounded"
+          required
         />
-      </div>
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 mb-4 border rounded"
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 mb-4 border rounded"
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition"
+        >
+          Sign Up
+        </button>
+
+        {message && <p className="mt-4 text-center text-red-500">{message}</p>}
+      </form>
     </div>
   );
 };
 
-export default SignUpForm;
+export default Signup;

@@ -1,7 +1,53 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginForm = ({ setAuthMode }) => {
+  const [username, setUsername] = useState(""); // match backend schema
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }), // use username to match FastAPI schema
+      });
+
+      const data = await response.json();
+      setLoading(false);
+
+      if (!response.ok) {
+        // Handle Pydantic validation errors
+        if (Array.isArray(data)) {
+          setError(data.map((err) => err.msg).join(", "));
+        } else {
+          setError(data.detail || "Login failed");
+        }
+        return;
+      }
+
+      console.log("User logged in:", data.user);
+      alert("Login successful! Welcome " + data.user.username);
+
+      // Navigate to main page
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      setError("Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <div className="h-screen w-screen flex bg-white">
       {/* Left Section */}
@@ -14,17 +60,28 @@ const LoginForm = ({ setAuthMode }) => {
         </p>
 
         {/* Login Form */}
-        <form className="w-full max-w-sm space-y-4">
+        <form className="w-full max-w-sm space-y-4" onSubmit={handleLogin}>
+          {error && (
+            <p className="text-red-500 text-sm">
+              {error}
+            </p>
+          )}
           <input
-            type="email"
-            placeholder="Email or username"
+            type="text"
+            placeholder="Username"
             className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-black/80 focus:outline-none"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <div className="w-full">
             <input
               type="password"
               placeholder="Password"
               className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-black/80 focus:outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <div className="text-right mt-2">
               <Link
@@ -35,8 +92,12 @@ const LoginForm = ({ setAuthMode }) => {
               </Link>
             </div>
           </div>
-          <button className="w-full py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition">
-            Login
+          <button
+            type="submit"
+            className="w-full py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
