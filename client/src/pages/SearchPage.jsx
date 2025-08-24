@@ -151,15 +151,14 @@ const SearchPage = () => {
             </button>
           </div>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-            {filteredResults.length === 0 && !loading && !error && (
-              <p className="text-center col-span-full text-gray-700">No results found</p>
-            )}
-            {filteredResults.map((item) => (
-              <ProductCard key={item.product_id || item.position} item={item} />
-            ))}
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+  {filteredResults.length === 0 && !loading && !error && (
+    <p className="text-center col-span-full text-gray-700">No results found</p>
+  )}
+  {filteredResults.map((item) => (
+    <ProductCard key={item.product_id || item.position} item={item} />
+  ))}
+</div>
         </div>
       )}
     </div>
