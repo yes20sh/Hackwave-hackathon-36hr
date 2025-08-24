@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from app.schemas.user_schema import UserCreate, UserLogin, ForgotPassword
+from app.schemas.user_schema import ChangePassword
 from app.crud import user_crud
-from app.utils.security import verify_password
+from app.utils.security import verify_password, get_password_hash
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ def serialize_user(user: dict):
     user["_id"] = str(user["_id"])
     user.pop("password", None)
     return user
+
 
 @router.post("/signup")
 async def signup(user: UserCreate):
@@ -29,9 +31,14 @@ async def signup(user: UserCreate):
         "user": created_user
     }
 
+
 @router.post("/login")
 async def login(user: UserLogin):
-    db_user = await user_crud.get_user_by_username(user.username)
+    # Check if input is email or username
+    db_user = await user_crud.get_user_by_username(user.username_or_email)
+    if not db_user:
+        db_user = await user_crud.get_user_by_email(user.username_or_email)
+
     if not db_user or not verify_password(user.password, db_user["password"]):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
@@ -42,6 +49,7 @@ async def login(user: UserLogin):
         "message": "Login successful",
         "user": db_user
     }
+
 
 @router.post("/forgot-password")
 async def forgot_password(data: ForgotPassword):
@@ -55,4 +63,23 @@ async def forgot_password(data: ForgotPassword):
     return {
         "success": True,
         "message": "Password reset successful. New password is 'newpassword123'"
+    }
+
+
+@router.post("/change-password")
+async def change_password(data: ChangePassword):
+    # Check if input is email or username
+    db_user = await user_crud.get_user_by_username(data.username_or_email)
+    if not db_user:
+        db_user = await user_crud.get_user_by_email(data.username_or_email)
+
+    if not db_user:
+        raise HTTPException(status_code=400, detail="User not found")
+
+    hashed_password = get_password_hash(data.new_password)
+    await user_crud.update_password(data.username_or_email, hashed_password)
+
+    return {
+        "success": True,
+        "message": "Password changed successfully"
     }
