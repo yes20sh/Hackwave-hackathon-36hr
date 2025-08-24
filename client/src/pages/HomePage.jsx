@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
  import React from 'react'
  
  const HomePage = () => {
@@ -9,6 +10,8 @@
  
  export default HomePage
 =======
+=======
+>>>>>>> b65a2d7 (update)
 import React from "react";
 
 const Homepage = () => {
@@ -135,4 +138,7 @@ const Homepage = () => {
 };
 
 export default Homepage;
+<<<<<<< HEAD
 >>>>>>> 7a8b756 (update)
+=======
+>>>>>>> b65a2d7 (update)
