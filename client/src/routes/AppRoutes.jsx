@@ -20,6 +20,7 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
+        
         <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Signin />} />
@@ -44,3 +45,6 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+
+
+

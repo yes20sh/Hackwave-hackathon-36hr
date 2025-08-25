@@ -6,7 +6,7 @@ const Signin = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    username: "",
+    username_or_email: "",
     password: "",
   });
   const [message, setMessage] = useState(null);
@@ -22,10 +22,17 @@ const Signin = () => {
     setError(null);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/users/login", form);
+      const res = await axios.post(
+        "http://localhost:8000/api/users/login",
+        form
+      );
       setMessage(res.data.message || "Login successful!");
-      // Example: save token
+
+      // ✅ If backend returns a token, save it for later
       // localStorage.setItem("token", res.data.access_token);
+
+      // Redirect after login (example: dashboard)
+      navigate("/");
     } catch (err) {
       if (err.response && err.response.data) {
         const detail = err.response.data.detail;
@@ -59,7 +66,9 @@ const Signin = () => {
 
         {/* Success / Error Messages */}
         {message && (
-          <p className="text-green-600 text-center mb-4 font-light">{message}</p>
+          <p className="text-green-600 text-center mb-4 font-light">
+            {message}
+          </p>
         )}
         {error && (
           <p className="text-red-500 text-center mb-4 font-light">{error}</p>
@@ -69,9 +78,9 @@ const Signin = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           <input
             type="text"
-            name="username"
-            placeholder="Username"
-            value={form.username}
+            name="username_or_email"
+            placeholder="Username or Email"
+            value={form.username_or_email}
             onChange={handleChange}
             className="w-full px-4 py-3 border rounded-xl font-light text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#669966] transition-all"
             required
