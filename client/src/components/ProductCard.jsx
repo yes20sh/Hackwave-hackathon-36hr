@@ -10,7 +10,7 @@ const renderStars = (rating) => {
     stars.push(
       <span
         key={i}
-        className={i <= roundedRating ? "text-yellow-400" : "text-gray-300"}
+        className={i <= roundedRating ? "text-emerald-500" : "text-gray-300"}
       >
         ★
       </span>
@@ -105,11 +105,11 @@ const ProductCard = ({ item, keyword }) => {
   };
 
   return (
-    <div className="relative bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
+    <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full border border-gray-100">
       {/* Add to Wardrobe Button */}
       <button
         onClick={() => setShowCategoryMenu(!showCategoryMenu)}
-        className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-md text-blue-500 hover:text-blue-600 transition-colors"
+        className="absolute top-2 right-2 bg-white/90 hover:bg-emerald-50 p-2 rounded-full shadow-md text-emerald-600 hover:text-emerald-700 transition-colors"
         title="Add to Wardrobe"
       >
         <PiCoatHangerFill size={20} />
@@ -117,14 +117,14 @@ const ProductCard = ({ item, keyword }) => {
 
       {/* Category Selection Popup */}
       {showCategoryMenu && (
-        <div className="absolute top-10 right-2 bg-white shadow-lg rounded-lg p-3 w-56 z-10 flex flex-col gap-2">
+        <div className="absolute top-10 right-2 bg-white shadow-lg rounded-lg p-3 w-56 z-10 flex flex-col gap-2 border border-gray-100">
           {loadingCategories ? (
             <p className="text-gray-400 text-sm">Loading...</p>
           ) : categories.length > 0 ? (
             categories.map((cat) => (
               <button
                 key={cat.id || cat.name}
-                className="text-left px-2 py-1 rounded hover:bg-gray-100"
+                className="text-left px-2 py-1 rounded hover:bg-emerald-50 text-gray-700"
                 onClick={() => handleCategorySelect(cat.name)}
               >
                 {cat.name}
@@ -141,18 +141,18 @@ const ProductCard = ({ item, keyword }) => {
         <img
           src={item.thumbnail}
           alt={item.title}
-          className="w-full h-48 object-contain bg-gray-100"
+          className="w-full h-48 object-contain bg-emerald-50"
         />
       )}
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1">
-        <h2 className="font-semibold text-lg mb-2 line-clamp-2">
+        <h2 className="font-semibold text-lg mb-2 line-clamp-2 text-gray-800">
           {highlightKeyword(item.title, keyword)}
         </h2>
 
         {item.description && (
-          <p className="text-sm text-gray-500 mb-2 line-clamp-3">
+          <p className="text-sm text-gray-600 mb-2 line-clamp-3">
             {highlightKeyword(item.description, keyword)}
           </p>
         )}
@@ -160,9 +160,9 @@ const ProductCard = ({ item, keyword }) => {
         <p className="text-sm text-gray-500 mb-2">Listed at: {item.source}</p>
 
         <div className="mb-3">
-          <p className="text-blue-600 font-bold text-lg">{item.price}</p>
+          <p className="text-emerald-600 font-bold text-lg">{item.price}</p>
           {item.old_price && (
-            <p className="text-gray-500 text-sm line-through">{item.old_price}</p>
+            <p className="text-gray-400 text-sm line-through">{item.old_price}</p>
           )}
         </div>
 
@@ -177,11 +177,12 @@ const ProductCard = ({ item, keyword }) => {
           <p className="text-sm text-gray-400 mb-3">No rating available</p>
         )}
 
+        {/* Button sticks to bottom */}
         <a
           href={item.product_link}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto inline-block w-full text-center bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium"
+          className="mt-auto inline-block w-full text-center bg-gradient-to-r from-emerald-600 to-green-600 text-white px-3 py-2 rounded-lg hover:from-emerald-700 hover:to-green-700 transition-colors font-medium shadow-md"
         >
           View Product
         </a>
@@ -191,3 +192,5 @@ const ProductCard = ({ item, keyword }) => {
 };
 
 export default ProductCard;
+
+

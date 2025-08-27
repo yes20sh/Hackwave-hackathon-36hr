@@ -3,7 +3,8 @@ import { FaUserCircle, FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = ({ showMainNavbar, searchQuery, setSearchQuery, onSearchSubmit }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location = useLocation();
 
   const handleSearch = (e) => {
@@ -53,7 +54,7 @@ const Navbar = ({ showMainNavbar, searchQuery, setSearchQuery, onSearchSubmit })
             </div>
           )}
 
-          {/* Right: Links + Mobile Menu */}
+          {/* Right: Links + Menus */}
           <div className="flex items-center space-x-4">
             <Link
               to="/wardrobe"
@@ -61,14 +62,20 @@ const Navbar = ({ showMainNavbar, searchQuery, setSearchQuery, onSearchSubmit })
             >
               Wardrobe
             </Link>
+            <Link
+              to="/Ai-Image"
+              className="px-3 py-2 rounded-full text-sm font-light text-gray-800 hover:bg-[#66996622] hover:text-[#669966] transition"
+            >
+              AI Image
+            </Link>
 
             {/* Mobile Hamburger */}
             <div className="md:hidden">
               <button
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="text-gray-700 hover:text-[#669966] focus:outline-none"
               >
-                {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
               </button>
             </div>
 
@@ -77,7 +84,7 @@ const Navbar = ({ showMainNavbar, searchQuery, setSearchQuery, onSearchSubmit })
               <FaUserCircle
                 size={28}
                 className="text-gray-700 hover:text-[#669966] cursor-pointer"
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
               />
             </div>
           </div>
@@ -85,46 +92,46 @@ const Navbar = ({ showMainNavbar, searchQuery, setSearchQuery, onSearchSubmit })
       </div>
 
       {/* Mobile Dropdown */}
-      {menuOpen && (
-        <div className="md:hidden bg-white/95 shadow-md px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute left-0 top-16 w-full bg-white/95 shadow-md px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
             to="/signup"
             className="block px-3 py-2 rounded-md text-base font-light text-gray-800 hover:bg-[#66996622] hover:text-[#669966] transition"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => setMobileMenuOpen(false)}
           >
             Sign Up
           </Link>
           <Link
             to="/login"
             className="block px-3 py-2 rounded-md text-base font-light text-gray-800 hover:bg-[#66996622] hover:text-[#669966] transition"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => setMobileMenuOpen(false)}
           >
             Login
           </Link>
           <Link
             to="/wardrobe"
             className="block px-3 py-2 rounded-md text-base font-light text-gray-800 hover:bg-[#66996622] hover:text-[#669966] transition"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => setMobileMenuOpen(false)}
           >
             Wardrobe
           </Link>
         </div>
       )}
 
-      {/* Desktop Dropdown (User Menu) */}
-      {menuOpen && (
+      {/* Desktop User Dropdown */}
+      {userMenuOpen && (
         <div className="hidden md:block absolute right-4 top-16 bg-white/95 border rounded-xl shadow-lg w-44">
           <Link
             to="/signup"
             className="block px-4 py-2 text-gray-800 font-light hover:bg-[#66996622] hover:text-[#669966] transition"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => setUserMenuOpen(false)}
           >
             Sign Up
           </Link>
           <Link
             to="/login"
             className="block px-4 py-2 text-gray-800 font-light hover:bg-[#66996622] hover:text-[#669966] transition"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => setUserMenuOpen(false)}
           >
             Login
           </Link>
@@ -135,3 +142,6 @@ const Navbar = ({ showMainNavbar, searchQuery, setSearchQuery, onSearchSubmit })
 };
 
 export default Navbar;
+
+
+
