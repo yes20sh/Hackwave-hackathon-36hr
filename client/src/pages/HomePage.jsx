@@ -42,9 +42,7 @@ const Homepage = () => {
         <div className="relative text-white text-center px-12 py-32 md:py-40">
           <h1 className="text-6xl md:text-8xl font-thin leading-tight max-w-6xl mx-auto mb-12">
             Discover Your Style
-            <span className="block font-extralight text-5xl md:text-6xl mt-6 opacity-95">
-              with AI precision
-            </span>
+          
           </h1>
           <p className="text-2xl md:text-3xl font-extralight max-w-4xl mx-auto leading-relaxed opacity-90 mb-16">
             Curate the perfect wardrobe from thousands of premium brands, guided
